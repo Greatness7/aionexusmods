@@ -2,16 +2,17 @@ from __future__ import annotations
 
 import platform
 from typing import Dict, List, Optional
+from pydantic import parse_obj_as
 
 from aiohttp import ClientSession
 
-from .schemas import *
+from .models import *
 
 BASE_URL = "https://api.nexusmods.com/v1"
 
 USER_AGENT = "{}/{} ({}; {}) {}/{}".format(
     __package__,
-    "0.1.1",  # importlib.metadata.version(__package__)
+    "0.1.2",  # importlib.metadata.version(__package__)
     platform.platform(),
     platform.architecture()[0],
     platform.python_implementation(),
@@ -45,7 +46,7 @@ class NexusMods:
         """
         json = dict(period=period)
         result = await self._get(f"{BASE_URL}/games/{self.game_domain_name}/mods/updated.json", json=json)
-        return ModUpdateSchema.load(result, many=True)
+        return parse_obj_as(List[ModUpdate], result)
 
     async def get_changelogs(self, mod_id: int) -> Dict[str, List[str]]:
         """
@@ -58,35 +59,35 @@ class NexusMods:
         Retrieve 10 latest added mods for a specified game.
         """
         result = await self._get(f"{BASE_URL}/games/{self.game_domain_name}/mods/latest_added.json")
-        return ModSchema.load(result, many=True)
+        return parse_obj_as(List[Mod], result)
 
     async def get_latest_updated(self) -> List[Mod]:
         """
         Retrieve 10 latest updated mods for a specified game.
         """
         result = await self._get(f"{BASE_URL}/games/{self.game_domain_name}/mods/latest_updated.json")
-        return ModSchema.load(result, many=True)
+        return parse_obj_as(List[Mod], result)
 
     async def get_trending(self) -> List[Mod]:
         """
         Retrieve 10 trending mods for a specified game.
         """
         result = await self._get(f"{BASE_URL}/games/{self.game_domain_name}/mods/trending.json")
-        return ModSchema.load(result, many=True)
+        return parse_obj_as(List[Mod], result)
 
     async def get_mod(self, mod_id: int) -> Mod:
         """
         Retrieve specified mod, from a specified game. Cached for 5 minutes.
         """
         result = await self._get(f"{BASE_URL}/games/{self.game_domain_name}/mods/{mod_id}.json")
-        return ModSchema.load(result)
+        return Mod.parse_obj(result)
 
     async def get_md5_search(self, md5_hash: str) -> List[SearchResult]:
         """
         Looks up a file MD5 file hash.
         """
         result = await self._get(f"{BASE_URL}/games/{self.game_domain_name}/mods/md5_search/{md5_hash}.json")
-        return SearchResultSchema.load(result, many=True)
+        return parse_obj_as(List[SearchResult], result)
 
     async def set_endorsed(self, mod_id: int, version: str, endorsed: bool) -> Status:
         """Endorse or unendorse a mod."""
@@ -101,7 +102,7 @@ class NexusMods:
                 f"{BASE_URL}/games/{self.game_domain_name}/mods/{mod_id}/abstain.json",
                 json=json,
             )
-        return StatusSchema.load(result)
+        return Status.parse_obj(result)
 
     #
     # Nexus Mods Public Api - Mod Files
@@ -112,14 +113,14 @@ class NexusMods:
         Retrieve a list of files for the specified mod.
         """
         result = await self._get(f"{BASE_URL}/games/{self.game_domain_name}/mods/{mod_id}/files.json")
-        return FilesResultSchema.load(result)
+        return FilesResult.parse_obj(result)
 
     async def get_file(self, mod_id: int, file_id: int) -> File:
         """
         View a specified mod file, using a specified game and mod.
         """
         result = await self._get(f"{BASE_URL}/games/{self.game_domain_name}/mods/{mod_id}/files/{file_id}.json")
-        return FileSchema.load(result)
+        return File.parse_obj(result)
 
     async def get_download_link(self, mod_id: int, file_id: int) -> List[DownloadLink]:
         """
@@ -128,7 +129,7 @@ class NexusMods:
         result = await self._get(
             f"{BASE_URL}/games/{self.game_domain_name}/mods/{mod_id}/files/{file_id}/download_link.json"
         )
-        return DownloadLinkSchema.load(result, many=True)
+        return parse_obj_as(List[DownloadLink], result)
 
     #
     # Nexus Mods Public Api - Games
@@ -137,12 +138,12 @@ class NexusMods:
     async def get_games(self) -> List[Game]:
         """Retrieve a list of all games."""
         result = await self._get(f"{BASE_URL}/games.json")
-        return GameSchema.load(result, many=True)
+        return parse_obj_as(List[Game], result)
 
     async def get_game(self) -> Game:
         """Retrieve specified game, along with download count, file count and categories."""
         result = await self._get(f"{BASE_URL}/games/{self.game_domain_name}.json")
-        return GameSchema.load(result)
+        return Game.parse_obj(result)
 
     #
     # Nexus Mods Public Api - User
@@ -151,12 +152,12 @@ class NexusMods:
     async def get_user_details(self) -> User:
         """Checks an API key is valid and returns the user's details."""
         result = await self._get(f"{BASE_URL}/users/validate.json")
-        return UserSchema.load(result)
+        return User.parse_obj(result)
 
     async def get_tracked_mods(self) -> List[TrackedMod]:
         """Fetch all the mods being tracked by the current user."""
         result = await self._get(f"{BASE_URL}/user/tracked_mods.json")
-        return TrackedModSchema.load(result, many=True)
+        return parse_obj_as(List[TrackedMod], result)
 
     async def set_tracked(self, mod_id: int, tracked: bool) -> Message:
         """Track or untrack a mod."""
@@ -165,12 +166,12 @@ class NexusMods:
             result = await self._post(f"{BASE_URL}/user/tracked_mods.json", json=json)
         else:
             result = await self._delete(f"{BASE_URL}/user/tracked_mods.json", json=json)
-        return MessageSchema.load(result)
+        return Message.parse_obj(result)
 
     async def get_endorsements(self) -> List[Endorsement]:
         """Returns a list of all endorsements for the current user."""
         result = await self._get(f"{BASE_URL}/user/endorsements.json")
-        return EndorsementSchema.load(result, many=True)
+        return parse_obj_as(List[Endorsement], result)
 
     #
     # Nexus Mods Public Api - Colour Schemes
@@ -181,7 +182,7 @@ class NexusMods:
         Returns list of all colour schemes, including the primary, secondary and 'darker' colours.
         """
         result = await self._get(f"{BASE_URL}/colourschemes.json")
-        return ColourSchemeSchema.load(result, many=True)
+        return parse_obj_as(List[ColourScheme], result)
 
     #
     # Implementation Details

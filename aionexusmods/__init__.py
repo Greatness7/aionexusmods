@@ -13,7 +13,6 @@ __all__ = [
     "ModUpdate",
     "ModUser",
     "NexusMods",
-    "SearchResult",
     "Status",
     "TrackedMod",
     "User",
@@ -21,7 +20,7 @@ __all__ = [
 
 from .nexusmods import NexusMods
 
-from .schemas import (
+from .models import (
     Category,
     ColourScheme,
     DownloadLink,
@@ -35,7 +34,6 @@ from .schemas import (
     Mod,
     ModUpdate,
     ModUser,
-    SearchResult,
     Status,
     TrackedMod,
     User,

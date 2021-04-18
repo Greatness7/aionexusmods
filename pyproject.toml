@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aionexusmods"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 authors = ["Greatness7 <Greatness7@gmail.com>"]
 include = ["aionexusmods/py.typed"]
@@ -8,9 +8,7 @@ include = ["aionexusmods/py.typed"]
 [tool.poetry.dependencies]
 python = "^3.9"
 aiohttp = "^3.7.4"
-marshmallow-dataclass = "^8.4.1"
-marshmallow = "^3.11.1"
-typeguard = "^2.12.0"
+pydantic = "^1.8.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0"
