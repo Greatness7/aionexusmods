@@ -1,0 +1,37 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "format",
+            "type": "shell",
+            "command": "poetry run black --line-length 120 .",
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": true,
+                "focus": true
+            }
+        },
+        {
+            "label": "check",
+            "type": "shell",
+            "command": "poetry run mypy .",
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": true,
+                "focus": true
+            }
+        },
+        {
+            "label": "test",
+            "type": "shell",
+            "command": "poetry run pytest -rP",
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": true,
+                "focus": true
+            }
+        }
+    ]
+}
