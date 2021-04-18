@@ -121,10 +121,10 @@ class ModUser(Base):
 
 @dataclass
 class Mod(Base):
-    name: str
-    summary: str
-    description: str
-    picture_url: str
+    name: Optional[str]
+    summary: Optional[str]
+    description: Optional[str]
+    picture_url: Optional[str]
     uid: int
     mod_id: int
     game_id: int

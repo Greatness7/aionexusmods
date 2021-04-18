@@ -1,15 +1,25 @@
-import pytest
+from pathlib import Path
 
+import pytest
 from aionexusmods import NexusMods
 from aionexusmods.nexusmods import USER_AGENT
 
-API_KEY = ""
-GAME = ""
+API_KEY = Path("secrets/API_KEY").read_text()
+GAME = "Morrowind"
 
 
+def test_user_agent():
+    assert USER_AGENT.startswith("aionexusmods/0.1")
+
+
+# These tests are disabled to avoid stressing API limits
+"""
 @pytest.mark.asyncio
-async def test_user_agent():
-    assert USER_AGENT.startswith("aionexusmods/0.1.0")
+async def test_latest_added():
+    async with NexusMods(API_KEY, GAME) as nexusmods:
+        latest_added = await nexusmods.get_latest_added()
+        assert len(latest_added) == 10
+"""
 
 
 @pytest.mark.asyncio

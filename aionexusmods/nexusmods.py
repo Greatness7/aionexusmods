@@ -11,7 +11,7 @@ BASE_URL = "https://api.nexusmods.com/v1"
 
 USER_AGENT = "{}/{} ({}; {}) {}/{}".format(
     __package__,
-    "0.1.0",  # importlib.metadata.version(__package__)
+    "0.1.1",  # importlib.metadata.version(__package__)
     platform.platform(),
     platform.architecture()[0],
     platform.python_implementation(),
