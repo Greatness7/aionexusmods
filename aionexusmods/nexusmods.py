@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import platform
-from typing import Dict, List, Optional
-from pydantic import parse_obj_as
+from typing import ClassVar, Dict, List, Optional
 
 from aiohttp import ClientSession
+from aiolimiter import AsyncLimiter
+from pydantic import parse_obj_as
 
 from .models import *
 
@@ -12,7 +13,7 @@ BASE_URL = "https://api.nexusmods.com/v1"
 
 USER_AGENT = "{}/{} ({}; {}) {}/{}".format(
     __package__,
-    "0.1.2",  # importlib.metadata.version(__package__)
+    "0.1.3",  # importlib.metadata.version(__package__)
     platform.platform(),
     platform.architecture()[0],
     platform.python_implementation(),
@@ -189,6 +190,7 @@ class NexusMods:
     #
 
     _session: Optional[ClientSession]
+    _limiter: ClassVar[AsyncLimiter] = AsyncLimiter(100, 30)
 
     def _active_session(self) -> ClientSession:
         if self._session is None:
@@ -216,13 +218,16 @@ class NexusMods:
         await self._active_session().close()
 
     async def _get(self, url, **kwargs) -> dict:
-        async with self._active_session().get(url, **kwargs) as response:
-            return await response.json()
+        async with self._limiter:
+            async with self._active_session().get(url, **kwargs) as response:
+                return await response.json()
 
     async def _post(self, url, **kwargs) -> dict:
-        async with self._active_session().post(url, **kwargs) as response:
-            return await response.json()
+        async with self._limiter:
+            async with self._active_session().post(url, **kwargs) as response:
+                return await response.json()
 
     async def _delete(self, url, **kwargs) -> dict:
-        async with self._active_session().delete(url, **kwargs) as response:
-            return await response.json()
+        async with self._limiter:
+            async with self._active_session().delete(url, **kwargs) as response:
+                return await response.json()
