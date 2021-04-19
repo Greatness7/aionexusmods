@@ -111,12 +111,13 @@ class NexusMods:
     # Nexus Mods Public Api - Mod Files
     #
 
-    async def get_files(self, mod_id: int) -> FilesResult:
+    async def get_files_and_updates(self, mod_id: int) -> tuple[list[File], list[FileUpdate]]:
         """
         Retrieve a list of files for the specified mod.
         """
         result = await self._get(f"{BASE_URL}/games/{self.game_domain_name}/mods/{mod_id}/files.json")
-        return parse_raw_as(FilesResult, result)
+        parsed = parse_raw_as(FilesResult, result)
+        return parsed.files, parsed.file_updates
 
     async def get_file(self, mod_id: int, file_id: int) -> File:
         """
