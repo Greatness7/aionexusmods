@@ -24,7 +24,8 @@ MOCK_USER = User(
     is_premium=True,
 )
 
-MOCK_CATEGORY = Category(category_id=1, name="Morrowind", parent_category=False)
+MOCK_CATEGORY_1 = Category(category_id=1, name="Morrowind", parent_category=False)
+MOCK_CATEGORY_2 = Category(category_id=1, name="Morrowind", parent_category=1)
 
 MOCK_GAME = Game(
     id=100,
@@ -40,7 +41,7 @@ MOCK_GAME = Game(
     authors=2546,
     file_endorsements=997932,
     mods=7956,
-    categories=[MOCK_CATEGORY],
+    categories=[MOCK_CATEGORY_1, MOCK_CATEGORY_2],
 )
 
 MOCK_MOD_USER = ModUser(

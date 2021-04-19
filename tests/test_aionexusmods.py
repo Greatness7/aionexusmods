@@ -1,39 +1,37 @@
 from pathlib import Path
 
 import pytest
+import toml
 from aionexusmods import NexusMods
-from aionexusmods.nexusmods import USER_AGENT
+
+from .mock_data import mock_responses
 
 API_KEY = Path("secrets/API_KEY").read_text()
-GAME = "Morrowind"
+GAME = "morrowind"
 
 
 def test_user_agent() -> None:
-    assert USER_AGENT.startswith("aionexusmods/0.1")
+    poetry = toml.load("pyproject.toml")["tool"]["poetry"]
+    prefix = f'{poetry["name"]}/{poetry["version"]}'
+    assert NexusMods.USER_AGENT.startswith(prefix)
 
 
 @pytest.mark.asyncio
-async def test_user_details() -> None:
+async def test_get_user(mock_responses):  # type: ignore
     async with NexusMods(API_KEY, GAME) as nexusmods:
-        assert await nexusmods.get_user_details()
+        assert await nexusmods.get_user()
 
 
 @pytest.mark.asyncio
-async def test_latest_added() -> None:
+async def test_session_closed(mock_responses):  # type: ignore
     async with NexusMods(API_KEY, GAME) as nexusmods:
-        latest_added = await nexusmods.get_latest_added()
-        assert len(latest_added) == 10
+        assert nexusmods._session is not None
+        assert nexusmods._session.closed == False
+    assert nexusmods._session.closed == True
 
 
 @pytest.mark.asyncio
-async def test_session_closed() -> None:
-    async with NexusMods(API_KEY, GAME) as nexusmods:
-        assert nexusmods._session.closed == False  # type: ignore[union-attr]
-    assert nexusmods._session.closed == True  # type: ignore[union-attr]
-
-
-@pytest.mark.asyncio
-async def test_sequential_sessions() -> None:
+async def test_sequential_sessions(mock_responses):  # type: ignore
     nexusmods = NexusMods(API_KEY, GAME)
     async with nexusmods:
         pass
@@ -42,24 +40,24 @@ async def test_sequential_sessions() -> None:
 
 
 @pytest.mark.asyncio
-async def test_session_not_started() -> None:
+async def test_session_not_started(mock_responses):  # type: ignore
     nexusmods = NexusMods(API_KEY, GAME)
     with pytest.raises(RuntimeError) as e:
-        await nexusmods.get_user_details()
+        await nexusmods.get_user()
     assert str(e.value) == "attempted to use a session before it was started"
 
 
 @pytest.mark.asyncio
-async def test_session_used_after_closed() -> None:
+async def test_session_used_after_closed(mock_responses):  # type: ignore
     async with NexusMods(API_KEY, GAME) as nexusmods:
         pass
     with pytest.raises(RuntimeError) as e:
-        await nexusmods.get_user_details()
+        await nexusmods.get_user()
     assert str(e.value) == "attempted to use a session after it was closed"
 
 
 @pytest.mark.asyncio
-async def test_overlapping_sessions_started() -> None:
+async def test_overlapping_sessions_started(mock_responses):  # type: ignore
     with pytest.raises(RuntimeError) as e:
         nexus_mods = NexusMods(API_KEY, GAME)
         async with nexus_mods:
