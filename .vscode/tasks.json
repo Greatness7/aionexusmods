@@ -32,6 +32,16 @@
                 "clear": true,
                 "focus": true
             }
+        },
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "poetry build",
+            "presentation": {
+                "showReuseMessage": false,
+                "clear": true,
+                "focus": true
+            }
         }
     ]
 }

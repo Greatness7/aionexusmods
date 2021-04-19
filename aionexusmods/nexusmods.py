@@ -3,7 +3,7 @@ from __future__ import annotations
 import platform
 from typing import ClassVar, Optional
 
-from aiohttp import ClientSession
+from aiohttp import ClientSession, TCPConnector
 from aiolimiter import AsyncLimiter
 from pydantic import parse_raw_as
 
@@ -207,7 +207,7 @@ class NexusMods:
     #
     _api_key: str
     _session: Optional[ClientSession]
-    _limiter: ClassVar[AsyncLimiter] = AsyncLimiter(100, 28)
+    _limiter: ClassVar[AsyncLimiter] = AsyncLimiter(3600/28)  # limit to 28 per sec
 
     def _active_session(self) -> ClientSession:
         if self._session is None:
@@ -226,6 +226,7 @@ class NexusMods:
                 "content-type": "application/json",
             },
             raise_for_status=True,
+            connector=TCPConnector(limit_per_host=28)
         )
         return self
 
