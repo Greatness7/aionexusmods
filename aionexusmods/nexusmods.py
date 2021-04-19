@@ -85,12 +85,13 @@ class NexusMods:
         result = await self._get(f"{BASE_URL}/games/{self.game_domain_name}/mods/{mod_id}.json")
         return parse_raw_as(Mod, result)
 
-    async def get_md5_search(self, md5_hash: str) -> list[SearchResult]:
+    async def get_md5_search(self, md5_hash: str) -> list[tuple[Mod, File]]:
         """
         Looks up a file MD5 file hash.
         """
         result = await self._get(f"{BASE_URL}/games/{self.game_domain_name}/mods/md5_search/{md5_hash}.json")
-        return parse_raw_as(list[SearchResult], result)
+        parsed = parse_raw_as(list[SearchResult], result)
+        return [(p.mod, p.file_details) for p in parsed]
 
     async def set_endorsed(self, mod_id: int, version: str, endorsed: bool) -> Status:
         """Endorse or unendorse a mod."""
