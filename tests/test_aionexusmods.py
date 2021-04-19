@@ -8,29 +8,32 @@ API_KEY = Path("secrets/API_KEY").read_text()
 GAME = "Morrowind"
 
 
-def test_user_agent():
+def test_user_agent() -> None:
     assert USER_AGENT.startswith("aionexusmods/0.1")
 
 
-# These tests are disabled to avoid stressing API limits
-"""
 @pytest.mark.asyncio
-async def test_latest_added():
+async def test_user_details() -> None:
+    async with NexusMods(API_KEY, GAME) as nexusmods:
+        assert await nexusmods.get_user_details()
+
+
+@pytest.mark.asyncio
+async def test_latest_added() -> None:
     async with NexusMods(API_KEY, GAME) as nexusmods:
         latest_added = await nexusmods.get_latest_added()
         assert len(latest_added) == 10
-"""
 
 
 @pytest.mark.asyncio
-async def test_session_closed():
+async def test_session_closed() -> None:
     async with NexusMods(API_KEY, GAME) as nexusmods:
-        assert nexusmods._session.closed == False
-    assert nexusmods._session.closed == True
+        assert nexusmods._session.closed == False  # type: ignore[union-attr]
+    assert nexusmods._session.closed == True  # type: ignore[union-attr]
 
 
 @pytest.mark.asyncio
-async def test_sequential_sessions():
+async def test_sequential_sessions() -> None:
     nexusmods = NexusMods(API_KEY, GAME)
     async with nexusmods:
         pass
@@ -39,7 +42,7 @@ async def test_sequential_sessions():
 
 
 @pytest.mark.asyncio
-async def test_session_not_started():
+async def test_session_not_started() -> None:
     nexusmods = NexusMods(API_KEY, GAME)
     with pytest.raises(RuntimeError) as e:
         await nexusmods.get_user_details()
@@ -47,7 +50,7 @@ async def test_session_not_started():
 
 
 @pytest.mark.asyncio
-async def test_session_used_after_closed():
+async def test_session_used_after_closed() -> None:
     async with NexusMods(API_KEY, GAME) as nexusmods:
         pass
     with pytest.raises(RuntimeError) as e:
@@ -56,7 +59,7 @@ async def test_session_used_after_closed():
 
 
 @pytest.mark.asyncio
-async def test_overlapping_sessions_started():
+async def test_overlapping_sessions_started() -> None:
     with pytest.raises(RuntimeError) as e:
         nexus_mods = NexusMods(API_KEY, GAME)
         async with nexus_mods:

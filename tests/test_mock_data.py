@@ -5,7 +5,7 @@ from .mock_data import *
 
 
 @pytest.mark.asyncio
-async def test_mock(mock_responses):
+async def test_mock(mock_responses):  # type: ignore
     async with NexusMods(MOCK_API_KEY, MOCK_GAME_DOMAIN_NAME) as nexusmods:
         assert await nexusmods.get_updated("1d") == [MOCK_MOD_UPDATE]
         assert await nexusmods.get_changelogs(MOCK_MOD_ID) == MOCK_CHANGELOGS

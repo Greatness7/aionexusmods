@@ -1,6 +1,13 @@
+from __future__ import annotations
+
+from typing import Iterator, Optional, Tuple, Union
+
+from pydantic import BaseModel
+
 __all__ = [
     "Category",
     "ColourScheme",
+    "ContentPreview",
     "DownloadLink",
     "Endorsement",
     "EndorsementRef",
@@ -17,10 +24,6 @@ __all__ = [
     "TrackedMod",
     "User",
 ]
-
-from typing import List, Optional, Tuple, Union
-
-from pydantic import BaseModel
 
 
 class Category(BaseModel):
@@ -89,8 +92,8 @@ class FileUpdate(BaseModel):
 
 
 class FilesResult(BaseModel):
-    files: List[File]
-    file_updates: List[FileUpdate]
+    files: list[File]
+    file_updates: list[FileUpdate]
 
 
 class Game(BaseModel):
@@ -107,7 +110,7 @@ class Game(BaseModel):
     authors: int
     file_endorsements: int
     mods: int
-    categories: List[Category]
+    categories: list[Category]
 
 
 class Message(BaseModel):
@@ -176,3 +179,19 @@ class User(BaseModel):
     profile_url: str
     is_premium: bool
     is_supporter: bool
+
+
+class ContentPreview(BaseModel):
+    path: Optional[str]
+    name: Optional[str]
+    type: Optional[str]
+    children: Optional[list[ContentPreview]]
+    size: Optional[str]
+
+    def children_recursive(self) -> Iterator[ContentPreview]:
+        for child in self.children or ():
+            yield child
+            yield from child.children_recursive()
+
+
+ContentPreview.update_forward_refs()

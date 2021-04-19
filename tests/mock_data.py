@@ -24,6 +24,8 @@ MOCK_USER = User(
     is_premium=True,
 )
 
+MOCK_CATEGORY = Category(category_id=1, name="Morrowind", parent_category=False)
+
 MOCK_GAME = Game(
     id=100,
     name="Morrowind",
@@ -38,10 +40,7 @@ MOCK_GAME = Game(
     authors=2546,
     file_endorsements=997932,
     mods=7956,
-    categories=[
-        {"category_id": 1, "name": "Morrowind", "parent_category": False},
-        {"category_id": 2, "name": "Buildings", "parent_category": 1},
-    ],
+    categories=[MOCK_CATEGORY],
 )
 
 MOCK_MOD_USER = ModUser(
@@ -84,7 +83,7 @@ MOCK_MOD = Mod(
 )
 
 MOCK_FILE = File(
-    id=[1000023992, 100],
+    id=[1000023992, 100],  # type:ignore[arg-type]
     uid=430496753592,
     file_id=1000023992,
     name="Nexus Mods API Test",
@@ -161,11 +160,11 @@ MOCK_ENDORSED_MESSAGE = {"message": "Updated to: Endorsed", "status": "Endorsed"
 MOCK_ABSTAINED_MESSAGE = {"message": "Updated to: Abstained", "status": "Abstained"}
 MOCK_TRACKED_MESSAGE = {"message": "User 64030 is now Tracking Mod: 49565"}
 MOCK_UNTRACKED_MESSAGE = {"message": "User 64030 is no longer tracking 49565"}
-MOCK_CHANGELOGS = {"0.1.0": ["Version 0.1.0"], "0.2.0": ["Version 0.2.0"]}
 
 MOCK_GET_UPDATED_PAYLOAD = {"period": "1d"}
 MOCK_SET_ENDORSED_PAYLOAD = {"version": "0.1.0"}
 MOCK_SET_TRACKED_PAYLOAD = {"mod_id": MOCK_MOD_ID, "DOMAIN_NAME": MOCK_GAME_DOMAIN_NAME}
+MOCK_CHANGELOGS = {"0.1.0": ["Version 0.1.0"], "0.2.0": ["Version 0.2.0"]}
 
 # -----------
 
@@ -300,7 +299,7 @@ MOCK_DELETE = [
 
 
 @pytest.fixture
-def mock_responses():
+def mock_responses():  # type: ignore
     with aioresponses() as mock:
         for url, kwargs, payload in MOCK_GET:
             mock.get(url, **kwargs, payload=payload)
