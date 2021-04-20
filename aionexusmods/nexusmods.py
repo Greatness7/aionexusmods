@@ -264,4 +264,9 @@ class NexusMods:
     async def _get_iter_chunks(self, url: str) -> AsyncIterator[bytes]:
         async with self._limiter:
             async with self._active_session().get(url) as response:
-                yield await response.content.read(1024 * 1024 * 12)  # 12 MB
+                while True:
+                    chunk = await response.content.read(1024 * 1024 * 12)  # 12 MB
+                    if chunk:
+                        yield chunk
+                    else:
+                        break
