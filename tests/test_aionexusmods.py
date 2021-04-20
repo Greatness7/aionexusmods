@@ -6,7 +6,7 @@ from aionexusmods import NexusMods
 
 from .mock_data import mock_responses
 
-API_KEY = Path("secrets/API_KEY").read_text()
+API_KEY = Path("secrets/API_KEY").read_text().rstrip()
 GAME = "morrowind"
 
 

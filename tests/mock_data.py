@@ -170,97 +170,81 @@ MOCK_CHANGELOGS = {"0.1.0": ["Version 0.1.0"], "0.2.0": ["Version 0.2.0"]}
 # -----------
 
 MOCK_GET = [
-    # nexusmods.get_updated("1d")
     (
         f"{MOCK_BASE_URL}/games/{MOCK_GAME_DOMAIN_NAME}/mods/updated.json",
         {"body": MOCK_GET_UPDATED_PAYLOAD},
         [MOCK_MOD_UPDATE.dict()],
     ),
-    # nexusmods.get_changelogs(MOCK_MOD_ID)
     (
         f"{MOCK_BASE_URL}/games/{MOCK_GAME_DOMAIN_NAME}/mods/{MOCK_MOD_ID}/changelogs.json",
         {},
         MOCK_CHANGELOGS,
     ),
-    # nexusmods.get_latest_added()
     (
         f"{MOCK_BASE_URL}/games/{MOCK_GAME_DOMAIN_NAME}/mods/latest_added.json",
         {},
         [MOCK_MOD.dict()],
     ),
-    # nexusmods.get_latest_updated()
     (
         f"{MOCK_BASE_URL}/games/{MOCK_GAME_DOMAIN_NAME}/mods/latest_updated.json",
         {},
         [MOCK_MOD.dict()],
     ),
-    # nexusmods.get_trending()
     (
         f"{MOCK_BASE_URL}/games/{MOCK_GAME_DOMAIN_NAME}/mods/trending.json",
         {},
         [MOCK_MOD.dict()],
     ),
-    # nexusmods.get_mod(MOCK_MOD_ID)
     (
         f"{MOCK_BASE_URL}/games/{MOCK_GAME_DOMAIN_NAME}/mods/{MOCK_MOD_ID}.json",
         {},
         MOCK_MOD.dict(),
     ),
-    # nexusmods.get_md5_search(MOCK_MD5_HASH)
     (
         f"{MOCK_BASE_URL}/games/{MOCK_GAME_DOMAIN_NAME}/mods/md5_search/{MOCK_MD5_HASH}.json",
         {},
         [MOCK_SEARCH_RESULT.dict()],
     ),
-    # nexusmods.get_files(MOCK_MOD_ID)
     (
         f"{MOCK_BASE_URL}/games/{MOCK_GAME_DOMAIN_NAME}/mods/{MOCK_MOD_ID}/files.json",
         {},
         MOCK_FILES_RESULT.dict(),
     ),
-    # nexusmods.get_file(MOCK_MOD_ID, MOCK_FILE_ID)
     (
         f"{MOCK_BASE_URL}/games/{MOCK_GAME_DOMAIN_NAME}/mods/{MOCK_MOD_ID}/files/{MOCK_FILE_ID}.json",
         {},
         MOCK_FILE.dict(),
     ),
-    # nexusmods.get_download_link(MOCK_MOD_ID, MOCK_FILE_ID)
     (
         f"{MOCK_BASE_URL}/games/{MOCK_GAME_DOMAIN_NAME}/mods/{MOCK_MOD_ID}/files/{MOCK_FILE_ID}/download_link.json",
         {},
         [MOCK_DOWNLOAD_LINK.dict()],
     ),
-    # nexusmods.get_games()
     (
         f"{MOCK_BASE_URL}/games.json",
         {},
         [MOCK_GAME.dict()],
     ),
-    # nexusmods.get_game(GAME)
     (
         f"{MOCK_BASE_URL}/games/{MOCK_GAME_DOMAIN_NAME}.json",
         {},
         MOCK_GAME.dict(),
     ),
-    # nexusmods.get_user_details()
     (
         f"{MOCK_BASE_URL}/users/validate.json",
         {},
         MOCK_USER.dict(),
     ),
-    # nexusmods.get_tracked_mods()
     (
         f"{MOCK_BASE_URL}/user/tracked_mods.json",
         {},
         [MOCK_TRACKED_MOD.dict()],
     ),
-    # nexusmods.get_endorsements()
     (
         f"{MOCK_BASE_URL}/user/endorsements.json",
         {},
         [MOCK_ENDORSEMENT.dict()],
     ),
-    # nexusmods.get_colour_schemes()
     (
         f"{MOCK_BASE_URL}/colourschemes.json",
         {},
@@ -269,19 +253,16 @@ MOCK_GET = [
 ]
 
 MOCK_POST = [
-    # nexusmods.set_tracked(mod_id, True)
     (
         f"{MOCK_BASE_URL}/user/tracked_mods.json",
         {"body": MOCK_SET_TRACKED_PAYLOAD},
         MOCK_TRACKED_MESSAGE,
     ),
-    # nexusmods.set_endorsed(mod_id, True)
     (
         f"{MOCK_BASE_URL}/games/{MOCK_GAME_DOMAIN_NAME}/mods/{MOCK_MOD_ID}/endorse.json",
         {"body": MOCK_SET_ENDORSED_PAYLOAD},
         MOCK_ENDORSED_MESSAGE,
     ),
-    # nexusmods.set_endorsed(mod_id, False)
     (
         f"{MOCK_BASE_URL}/games/{MOCK_GAME_DOMAIN_NAME}/mods/{MOCK_MOD_ID}/abstain.json",
         {"body": MOCK_SET_ENDORSED_PAYLOAD},
@@ -290,7 +271,6 @@ MOCK_POST = [
 ]
 
 MOCK_DELETE = [
-    # nexusmods.set_tracked(mod_id, False)
     (
         f"{MOCK_BASE_URL}/user/tracked_mods.json",
         {"body": MOCK_SET_TRACKED_PAYLOAD},

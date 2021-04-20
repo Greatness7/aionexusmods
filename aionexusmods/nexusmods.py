@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import platform
-from typing import ClassVar, Optional
+from typing import ClassVar, Optional, Union
 
 from aiohttp import ClientSession, TCPConnector
 from aiolimiter import AsyncLimiter
@@ -12,6 +12,8 @@ import aionexusmods
 from .models import *
 
 __all__ = ["NexusMods"]
+
+_JsonDict = dict[str, Union[str, int]]
 
 
 class NexusMods:
@@ -42,14 +44,14 @@ class NexusMods:
     # Nexus Mods Public Api - Mods
     #
 
-    async def get_updated_mods(self, period: str) -> list[ModUpdate]:
+    async def get_mod_updates(self, period: str) -> list[ModUpdate]:
         """
         Returns a list of mods that have been updated in a given period, with timestamps of their last update.
         Cached for 5 minutes.
         The only accepted periods are '1d', '1w' and '1m' (1 day, 1 week and 1 month).
         """
-        data = f'{{"period"={period}}}'
-        result = await self._get(f"{self.BASE_URL}/games/{self.game_domain_name}/mods/updated.json", data=data)
+        json: _JsonDict = {"period": period}
+        result = await self._get(f"{self.BASE_URL}/games/{self.game_domain_name}/mods/updated.json", json=json)
         return parse_raw_as(list[ModUpdate], result)
 
     async def get_mod_changelogs(self, mod_id: int) -> dict[str, list[str]]:
@@ -97,16 +99,16 @@ class NexusMods:
 
     async def set_endorsed(self, mod_id: int, version: str, endorsed: bool) -> Status:
         """Endorse or unendorse a mod."""
-        data = f'{{"version"="{version}"}}'
+        json: _JsonDict = {"version": version}
         if endorsed:
             result = await self._post(
                 f"{self.BASE_URL}/games/{self.game_domain_name}/mods/{mod_id}/endorse.json",
-                data=data,
+                json=json,
             )
         else:
             result = await self._post(
                 f"{self.BASE_URL}/games/{self.game_domain_name}/mods/{mod_id}/abstain.json",
-                data=data,
+                json=json,
             )
         return parse_raw_as(Status, result)
 
@@ -168,11 +170,11 @@ class NexusMods:
 
     async def set_tracked(self, mod_id: int, tracked: bool) -> Message:
         """Track or untrack a mod."""
-        data = f'{{"mod_id":{mod_id},"domain_name":"{self.game_domain_name}"}}'
+        json: _JsonDict = {"domain_name": self.game_domain_name, "mod_id": mod_id}
         if tracked:
-            result = await self._post(f"{self.BASE_URL}/user/tracked_mods.json", data=data)
+            result = await self._post(f"{self.BASE_URL}/user/tracked_mods.json", json=json)
         else:
-            result = await self._delete(f"{self.BASE_URL}/user/tracked_mods.json", data=data)
+            result = await self._delete(f"{self.BASE_URL}/user/tracked_mods.json", json=json)
         return parse_raw_as(Message, result)
 
     async def get_endorsements(self) -> list[Endorsement]:
@@ -207,7 +209,7 @@ class NexusMods:
     #
     _api_key: str
     _session: Optional[ClientSession]
-    _limiter: ClassVar[AsyncLimiter] = AsyncLimiter(3600/28)  # limit to 28 per sec
+    _limiter: ClassVar[AsyncLimiter] = AsyncLimiter(3600 / 28)  # limit to 28 per sec
 
     def _active_session(self) -> ClientSession:
         if self._session is None:
@@ -226,24 +228,24 @@ class NexusMods:
                 "content-type": "application/json",
             },
             raise_for_status=True,
-            connector=TCPConnector(limit_per_host=28)
+            connector=TCPConnector(limit_per_host=28),
         )
         return self
 
     async def __aexit__(self, *args):  # type: ignore[no-untyped-def]
         await self._active_session().close()
 
-    async def _get(self, url: str, data: Optional[str] = None) -> bytes:
+    async def _get(self, url: str, json: Optional[_JsonDict] = None) -> bytes:
         async with self._limiter:
-            async with self._active_session().get(url, data=data) as response:
+            async with self._active_session().get(url, json=json) as response:
                 return await response.read()
 
-    async def _post(self, url: str, data: Optional[str] = None) -> bytes:
+    async def _post(self, url: str, json: Optional[_JsonDict] = None) -> bytes:
         async with self._limiter:
-            async with self._active_session().post(url, data=data) as response:
+            async with self._active_session().post(url, json=json) as response:
                 return await response.read()
 
-    async def _delete(self, url: str, data: Optional[str] = None) -> bytes:
+    async def _delete(self, url: str, json: Optional[_JsonDict] = None) -> bytes:
         async with self._limiter:
-            async with self._active_session().delete(url, data=data) as response:
+            async with self._active_session().delete(url, json=json) as response:
                 return await response.read()
