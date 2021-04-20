@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import platform
-from typing import ClassVar, Optional, Union
+from os import PathLike
+from typing import AsyncIterator, ClassVar, Optional, Union
 
 from aiohttp import ClientSession, TCPConnector
 from aiolimiter import AsyncLimiter
@@ -201,8 +202,18 @@ class NexusMods:
         result = await self._get(content_preview_link)
         return parse_raw_as(ContentPreview, result)
 
-    async def download(self, download_link: str) -> bytes:
-        return await self._get(download_link)
+    async def download(self, download_link: str, path: Union[str, PathLike[str]]) -> None:
+        from os.path import dirname
+        from aiofiles.os import mkdir
+        from aiofiles import open
+
+        try:
+            await mkdir(dirname(path))
+        except (FileExistsError, FileNotFoundError):
+            pass
+        async with open(path, "wb") as f:
+            async for chunk in self._get_iter_chunks(download_link):
+                await f.write(chunk)
 
     #
     # Implementation Details
@@ -249,3 +260,8 @@ class NexusMods:
         async with self._limiter:
             async with self._active_session().delete(url, json=json) as response:
                 return await response.read()
+
+    async def _get_iter_chunks(self, url: str) -> AsyncIterator[bytes]:
+        async with self._limiter:
+            async with self._active_session().get(url) as response:
+                yield await response.content.read(1024 * 1024 * 12)  # 12 MB
