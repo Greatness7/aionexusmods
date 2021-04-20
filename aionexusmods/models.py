@@ -73,7 +73,7 @@ class File(BaseModel):
     file_name: str
     uploaded_timestamp: int
     uploaded_time: str
-    mod_version: str
+    mod_version: Optional[str]
     external_virus_scan_url: Optional[str]
     description: str
     size_kb: int

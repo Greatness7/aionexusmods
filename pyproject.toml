@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aionexusmods"
-version = "0.3.0"
+version = "0.3.1"
 description = ""
 authors = ["Greatness7 <Greatness7@gmail.com>"]
 include = ["aionexusmods/py.typed"]
