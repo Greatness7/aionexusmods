@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "aionexusmods"
-version = "0.4.1"
+version = "0.5.0"
 description = ""
 authors = ["Greatness7 <Greatness7@gmail.com>"]
 include = ["aionexusmods/py.typed"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.6.1"
 aiohttp = "^3.7.4"
 aiolimiter = "^1.0.0-beta.1"
 pydantic = "^1.8.1"
