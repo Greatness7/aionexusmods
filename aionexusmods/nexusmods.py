@@ -57,42 +57,42 @@ class NexusMods:
 
     async def get_mod_changelogs(self, mod_id: int) -> dict[str, list[str]]:
         """
-        Returns list of changelogs for mod.
+        Returns a list of changelogs for the specified mod.
         """
         result = await self._get(f"{self.BASE_URL}/games/{self.game_domain_name}/mods/{mod_id}/changelogs.json")
         return parse_raw_as(dict[str, list[str]], result)
 
     async def get_latest_added_mods(self) -> list[Mod]:
         """
-        Retrieve 10 latest added mods for a specified game.
+        Returns the 10 latest added mods.
         """
         result = await self._get(f"{self.BASE_URL}/games/{self.game_domain_name}/mods/latest_added.json")
         return parse_raw_as(list[Mod], result)
 
     async def get_latest_updated_mods(self) -> list[Mod]:
         """
-        Retrieve 10 latest updated mods for a specified game.
+        Returns the 10 latest updated mods.
         """
         result = await self._get(f"{self.BASE_URL}/games/{self.game_domain_name}/mods/latest_updated.json")
         return parse_raw_as(list[Mod], result)
 
     async def get_trending_mods(self) -> list[Mod]:
         """
-        Retrieve 10 trending mods for a specified game.
+        Returns 10 trending mods.
         """
         result = await self._get(f"{self.BASE_URL}/games/{self.game_domain_name}/mods/trending.json")
         return parse_raw_as(list[Mod], result)
 
     async def get_mod(self, mod_id: int) -> Mod:
         """
-        Retrieve specified mod, from a specified game. Cached for 5 minutes.
+        Returns a specified mod. Cached for 5 minutes.
         """
         result = await self._get(f"{self.BASE_URL}/games/{self.game_domain_name}/mods/{mod_id}.json")
         return parse_raw_as(Mod, result)
 
     async def get_md5_search(self, md5_hash: str) -> list[tuple[Mod, File]]:
         """
-        Looks up a file MD5 file hash.
+        Returns a list of mod files for the given MD5 file hash.
         """
         result = await self._get(f"{self.BASE_URL}/games/{self.game_domain_name}/mods/md5_search/{md5_hash}.json")
         parsed = parse_raw_as(list[SearchResult], result)
@@ -119,7 +119,7 @@ class NexusMods:
 
     async def get_files_and_updates(self, mod_id: int) -> tuple[list[File], list[FileUpdate]]:
         """
-        Retrieve a list of files for the specified mod.
+        Returns a list of files for the specified mod.
         """
         result = await self._get(f"{self.BASE_URL}/games/{self.game_domain_name}/mods/{mod_id}/files.json")
         parsed = parse_raw_as(FilesResult, result)
@@ -127,14 +127,14 @@ class NexusMods:
 
     async def get_file(self, mod_id: int, file_id: int) -> File:
         """
-        View a specified mod file, using a specified game and mod.
+        Returns the specified file for the specified mod.
         """
         result = await self._get(f"{self.BASE_URL}/games/{self.game_domain_name}/mods/{mod_id}/files/{file_id}.json")
         return parse_raw_as(File, result)
 
     async def get_download_links(self, mod_id: int, file_id: int) -> list[DownloadLink]:
         """
-        Retrieve a generated download link for the specified mod file.
+        Returns a generated download link for the specified mod file.
         """
         result = await self._get(
             f"{self.BASE_URL}/games/{self.game_domain_name}/mods/{mod_id}/files/{file_id}/download_link.json"
@@ -146,12 +146,12 @@ class NexusMods:
     #
 
     async def get_games(self) -> list[Game]:
-        """Retrieve a list of all games."""
+        """Returns a list of all games."""
         result = await self._get(f"{self.BASE_URL}/games.json")
         return parse_raw_as(list[Game], result)
 
     async def get_game(self) -> Game:
-        """Retrieve specified game, along with download count, file count and categories."""
+        """Returns the specified game."""
         result = await self._get(f"{self.BASE_URL}/games/{self.game_domain_name}.json")
         return parse_raw_as(Game, result)
 
@@ -160,12 +160,12 @@ class NexusMods:
     #
 
     async def get_user(self) -> User:
-        """Checks an API key is valid and returns the user's details."""
+        """Returns the current user."""
         result = await self._get(f"{self.BASE_URL}/users/validate.json")
         return parse_raw_as(User, result)
 
     async def get_tracked_mods(self) -> list[TrackedMod]:
-        """Fetch all the mods being tracked by the current user."""
+        """Returns all the mods being tracked by the current user."""
         result = await self._get(f"{self.BASE_URL}/user/tracked_mods.json")
         return parse_raw_as(list[TrackedMod], result)
 
@@ -199,10 +199,16 @@ class NexusMods:
     #
 
     async def get_content_preview(self, content_preview_link: str) -> ContentPreview:
+        """
+        Returns the results from the specified content preview link.
+        """
         result = await self._get(content_preview_link)
         return parse_raw_as(ContentPreview, result)
 
     async def download(self, download_link: str, path: Union[str, PathLike[str]]) -> None:
+        """
+        Downloads the contents from the specified download link to the specified path.
+        """
         from os.path import dirname
         from aiofiles.os import mkdir
         from aiofiles import open
