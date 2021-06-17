@@ -146,7 +146,7 @@ class Mod(BaseModel):
     contains_adult_content: bool
     status: str
     available: bool
-    user: ModUser
+    user: Optional[ModUser]
     endorsement: Optional[EndorsementRef]
 
 

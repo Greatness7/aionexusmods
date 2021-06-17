@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aionexusmods"
-version = "0.5.0"
+version = "0.6.0"
 description = ""
 license = "MIT"
 authors = ["Greatness7 <Greatness7@gmail.com>"]
